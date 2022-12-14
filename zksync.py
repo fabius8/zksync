@@ -18,23 +18,21 @@ from decimal import Decimal
 import schedule
 import time
 import json
-import os
-import random
+from random import choice
+from datetime import datetime
 
 URL_TO_ETH_NETWORK = "https://rpc.ankr.com/eth_goerli"
 ZKSYNC_NETWORK_URL = "https://zksync2-testnet.zksync.dev"
 
-
-#hain_id = 5
-#PRIVATE_KEY = os.environ.get("")
-
 private = json.load(open('private.json'))
-account: LocalAccount = Account.from_key(private["private"])
-
+print("总共", len(private["private"]), "钱包")
+#account: LocalAccount = Account.from_key(private["private"])
 
 
 def deposit():
     try:
+        print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "随机执行存款")
+        account: LocalAccount = Account.from_key(choice(private["private"]))
         eth_web3 = Web3(Web3.HTTPProvider(URL_TO_ETH_NETWORK))
         zkSync_web3 = ZkSyncBuilder.build(ZKSYNC_NETWORK_URL)
         #geth_poa_middleware is used to connect to geth --dev.
@@ -59,6 +57,7 @@ def deposit():
         pass
 
 def get_account_balance():
+    account: LocalAccount = Account.from_key(choice(private["private"]))
     eth_web3 = Web3(Web3.HTTPProvider(URL_TO_ETH_NETWORK))
     zkSync_web3 = ZkSyncBuilder.build(ZKSYNC_NETWORK_URL)
     zk_balance = zkSync_web3.zksync.get_balance(account.address, EthBlockParams.LATEST.value)
@@ -66,6 +65,8 @@ def get_account_balance():
 
 def transfer_to_self():
     try:
+        print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "随机执行发送")
+        account: LocalAccount = Account.from_key(choice(private["private"]))
         eth_web3 = Web3(Web3.HTTPProvider(URL_TO_ETH_NETWORK))
         zkSync_web3 = ZkSyncBuilder.build(ZKSYNC_NETWORK_URL)
         chain_id = zkSync_web3.zksync.chain_id
@@ -104,6 +105,8 @@ def transfer_to_self():
 
 def withdraw():
     try:
+        print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "随机执行提款")
+        account: LocalAccount = Account.from_key(choice(private["private"]))
         eth_web3 = Web3(Web3.HTTPProvider(URL_TO_ETH_NETWORK))
         zkSync_web3 = ZkSyncBuilder.build(ZKSYNC_NETWORK_URL)
         chain_id = zkSync_web3.zksync.chain_id
@@ -150,15 +153,14 @@ def withdraw():
         print(e)
         pass
 
-#print(random.random()*10)
 transfer_to_self()
 deposit()
 withdraw()
 #schedule.every(10).seconds.do(lambda: transfer_to_self())
 
-schedule.every(50).minutes.do(lambda: transfer_to_self())
-schedule.every(2).hours.do(lambda: deposit())
-schedule.every(3).hours.do(lambda: withdraw())
+schedule.every(10).minutes.do(lambda: transfer_to_self())
+schedule.every(10).minutes.do(lambda: deposit())
+schedule.every(10).minutes.do(lambda: withdraw())
 while True:
     schedule.run_pending()
     time.sleep(1)
