@@ -53,7 +53,7 @@ def deposit():
         #print(f"tx status: {tx_receipt}")
         print(f"tx status: {tx_receipt['status']}")
     except Exception as e:
-        print(e)
+        print(e, account.address)
         pass
 
 def get_account_balance():
@@ -100,7 +100,7 @@ def transfer_to_self():
         tx_receipt = zkSync_web3.zksync.wait_for_transaction_receipt(tx_hash, timeout=240, poll_latency=0.5)
         print(f"tx status: {tx_receipt['status']}")
     except Exception as e:
-        print(e)
+        print(e, account.address)
         pass
 
 def withdraw():
@@ -150,7 +150,7 @@ def withdraw():
         tx_receipt = zkSync_web3.zksync.wait_for_transaction_receipt(tx_hash, timeout=240, poll_latency=0.5)
         print(f"tx status: {tx_receipt['status']}")
     except Exception as e:
-        print(e)
+        print(e, account.address)
         pass
 
 transfer_to_self()
